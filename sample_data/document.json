@@ -1,0 +1,52 @@
+{
+  "organization": "Product Fruits s.r.o.",
+  "report": {
+    "type": "SOC 2 Type II",
+    "service": "Product Fruits, a cloud-hosted software application",
+    "audit_period": "July 24, 2024 through July 23, 2025",
+    "trust_services_categories": [
+      "Security",
+      "Confidentiality",
+      "Availability"
+    ]
+  },
+  "system_description": {
+    "service_overview": "Product Fruits is a cloud-hosted digital adoption platform for web applications.",
+    "cloud_providers_and_subservice_organizations": [
+      "Amazon Web Services Inc. (AWS) is used to provide cloud Software-as-a-Service hosting.",
+      "GitHub is used to provide and host the GitHub application for source code repository, version control, and build software.",
+      "Microsoft Office 365 is used for office communication, file sharing, collaboration services, and Microsoft Office applications."
+    ],
+    "infrastructure_location": {
+      "production_infrastructure": "The production infrastructure for the Product Fruits software application is hosted on AWS in various regions across Europe.",
+      "application_location": "AWS Europe",
+      "supporting_locations": [
+        "AWS",
+        "GitHub Cloud",
+        "Office 365"
+      ],
+      "backup_location": "The SOC 2 report references business continuity and disaster recovery plans but does not specify a named backup region in the extracted system description."
+    }
+  },
+  "security_and_availability": {
+    "monitoring": [
+      "Monitoring of key infrastructure components is in place to collect and generate alerts based on utilization metrics.",
+      "System performance and availability monitoring mechanisms help ensure consistent delivery of the system and its components."
+    ],
+    "business_continuity": "Business continuity and disaster recovery plans are tested on a periodic basis.",
+    "incident_notification": "The SOC 2 report describes controls and commitments, but the extracted report text does not provide a specific client incident-notification SLA."
+  },
+  "data_and_third_parties": {
+    "confidentiality_commitments": [
+      "Encryption technologies are used to protect system data both at rest and in transit.",
+      "Confidentiality and non-disclosure agreements are used with employees, contractors, and third parties.",
+      "Confidential information must be used only for purposes explicitly stated in agreements between Product Fruits s.r.o. and user entities."
+    ],
+    "third_party_processing": "The report identifies AWS, GitHub, and Microsoft Office 365 as subservice organizations. It does not provide a complete personal-information data-flow inventory in the extracted sample."
+  },
+  "monitoring_questionnaire_terms": {
+    "application_performance_monitoring": "The report references system performance, availability monitoring, infrastructure monitoring, utilization metrics, and alerts. It does not explicitly use the term Application Performance Monitoring (APM).",
+    "end_user_monitoring": "The extracted report text does not explicitly mention End User Monitoring (EUM).",
+    "digital_experience_monitoring": "The extracted report text does not explicitly mention Digital Experience Monitoring (DEM)."
+  }
+}

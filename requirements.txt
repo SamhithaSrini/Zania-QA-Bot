@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+python-multipart
+langchain==0.3.27
+langchain-openai==0.3.35
+langchain-community==0.3.31
+langchain-text-splitters==0.3.11
+faiss-cpu
+sentence-transformers==2.7.0
+torch==2.2.2
+transformers==4.41.2
+pymupdf
+pydantic-settings
+python-dotenv
+pytest
+pytest-asyncio
+httpx
