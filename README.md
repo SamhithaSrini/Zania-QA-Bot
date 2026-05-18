@@ -95,6 +95,40 @@ The service listens on `http://localhost:8000`.
 pytest -v
 ```
 
+## Evaluation
+
+The repo includes a small labeled Product Fruits evaluation set at `eval_data/productfruits_qa.json`. It contains answerable and unanswerable questions so the bot can be checked for both useful answers and graceful refusal.
+
+Run the evaluator:
+
+```bash
+python scripts/evaluate.py --output eval_results/productfruits_results.json
+```
+
+The script reports:
+
+- token F1 against reference answers
+- keyword recall for required facts
+- unanswerable accuracy for `Not found in the provided document.`
+- citation rate
+- build and answer latency
+
+Baseline run with `USE_RERANKER=false`, `FAISS_TOP_K=5`, and `gpt-4o-mini`:
+
+| Metric | Value |
+| --- | ---: |
+| Cases | 12 |
+| Answerable / unanswerable | 6 / 6 |
+| Average token F1 | 0.870 |
+| Answerable token F1 | 0.739 |
+| Keyword recall | 0.900 |
+| Unanswerable accuracy | 1.000 |
+| Citation rate | 1.000 |
+| Build time | 0.45s |
+| Answer time | 3.12s |
+
+This is intentionally domain-specific rather than a generic SQuAD score. It tests the actual SOC 2/vendor-questionnaire workflow, including retrieval, grounding, citations, and unanswerable cases.
+
 ## Design Decisions
 
 The service can use two-stage retrieval. FAISS first performs fast vector similarity search over document chunks. When `USE_RERANKER=true`, the cross-encoder reranks those candidates by jointly scoring each question and chunk. This adds latency, but it can improve answer quality because the LLM receives fewer and more relevant chunks.

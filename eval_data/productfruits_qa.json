@@ -1,0 +1,90 @@
+{
+  "document": "sample_data/document.json",
+  "description": "Product Fruits SOC 2-aligned evaluation set with answerable and unanswerable vendor-security questions.",
+  "cases": [
+    {
+      "id": "pf-cloud-providers",
+      "question": "Which cloud providers and subservice organizations does Product Fruits rely on?",
+      "answerable": true,
+      "reference_answer": "Product Fruits relies on Amazon Web Services (AWS) for cloud SaaS hosting, GitHub for source code repository/version control/build software, and Microsoft Office 365 for office communication, file sharing, collaboration services, and Office applications.",
+      "required_keywords": ["Amazon Web Services", "AWS", "GitHub", "Microsoft Office 365"]
+    },
+    {
+      "id": "pf-report-type",
+      "question": "What type of audit report is this and what trust services categories are covered?",
+      "answerable": true,
+      "reference_answer": "The document is a SOC 2 Type II report covering the Security, Confidentiality, and Availability trust services categories.",
+      "required_keywords": ["SOC 2 Type II", "Security", "Confidentiality", "Availability"]
+    },
+    {
+      "id": "pf-audit-period",
+      "question": "What audit period does the report cover?",
+      "answerable": true,
+      "reference_answer": "The report covers July 24, 2024 through July 23, 2025.",
+      "required_keywords": ["July 24, 2024", "July 23, 2025"]
+    },
+    {
+      "id": "pf-data-center",
+      "question": "Please specify the exact primary data center location or region of the cloud infrastructure used to host the service.",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    },
+    {
+      "id": "pf-monitoring",
+      "question": "What monitoring does Product Fruits describe for infrastructure, performance, and availability?",
+      "answerable": true,
+      "reference_answer": "The report describes monitoring of key infrastructure components, alerts based on utilization metrics, and system performance and availability monitoring mechanisms.",
+      "required_keywords": ["infrastructure", "alerts", "utilization metrics", "performance", "availability"]
+    },
+    {
+      "id": "pf-confidentiality",
+      "question": "What confidentiality protections are described?",
+      "answerable": true,
+      "reference_answer": "The report describes encryption for data at rest and in transit, confidentiality and non-disclosure agreements, and use of confidential information only for explicitly stated purposes.",
+      "required_keywords": ["encryption", "at rest", "in transit", "confidentiality", "non-disclosure"]
+    },
+    {
+      "id": "pf-business-continuity",
+      "question": "Are business continuity and disaster recovery plans tested?",
+      "answerable": true,
+      "reference_answer": "Yes. Business continuity and disaster recovery plans are tested on a periodic basis.",
+      "required_keywords": ["business continuity", "disaster recovery", "tested"]
+    },
+    {
+      "id": "pf-incident-sla",
+      "question": "What is Product Fruits' SLA for notifying clients during a security incident?",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    },
+    {
+      "id": "pf-hipaa",
+      "question": "Does Product Fruits sign HIPAA Business Associate Agreements?",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    },
+    {
+      "id": "pf-backup-region",
+      "question": "What named backup cloud region is used for disaster recovery?",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    },
+    {
+      "id": "pf-eum",
+      "question": "Does the report explicitly say Product Fruits performs End User Monitoring (EUM)?",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    },
+    {
+      "id": "pf-data-retention",
+      "question": "What is the exact customer data retention period after account termination?",
+      "answerable": false,
+      "reference_answer": "Not found in the provided document.",
+      "required_keywords": []
+    }
+  ]
+}
