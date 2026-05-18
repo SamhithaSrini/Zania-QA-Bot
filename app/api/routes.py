@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.exceptions import UnsupportedFileTypeError
 from app.models.schemas import QAResponse
 from app.services.ingest import build_retriever
+from app.services.judge import add_rag_scores
 from app.services.parser import parse_document, parse_questions
 from app.services.qa import answer_questions, build_chain
 
@@ -44,7 +45,20 @@ async def qa(document: UploadFile, questions: UploadFile) -> QAResponse:
             answer_questions(parsed_questions, chain),
             timeout=settings.REQUEST_TIMEOUT_SECONDS,
         )
-        response = QAResponse(results=results)
+        overall_confidence = None
+        if settings.ENABLE_RAG_SCORES:
+            try:
+                results, overall_confidence = await asyncio.wait_for(
+                    add_rag_scores(results),
+                    timeout=settings.REQUEST_TIMEOUT_SECONDS,
+                )
+            except Exception:
+                logger.exception("rag_score_generation_failed")
+
+        response = QAResponse(
+            results=results,
+            overall_confidence=overall_confidence,
+        )
         logger.info(
             "qa_request_completed",
             extra={

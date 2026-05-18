@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     MAX_QUESTIONS: int = 25
     MAX_QUESTION_CHARS: int = 1000
     MAX_CONCURRENT_QUESTIONS: int = 5
+    ENABLE_RAG_SCORES: bool = True
+    MAX_CONCURRENT_JUDGE_CALLS: int = 3
     REQUEST_TIMEOUT_SECONDS: int = 120
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

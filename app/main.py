@@ -184,6 +184,19 @@ async def upload_form() -> str:
             color: var(--muted);
             font-size: 12px;
           }
+          .confidence {
+            grid-column: 1 / -1;
+            display: none;
+            padding: 12px;
+            border: 1px solid #b8dfd5;
+            border-radius: 8px;
+            background: #f2faf8;
+          }
+          .confidence strong {
+            display: block;
+            font-size: 24px;
+            color: var(--accent-dark);
+          }
           .results.panel {
             min-height: 480px;
             padding: 0;
@@ -231,6 +244,40 @@ async def upload_form() -> str:
           .answer p {
             margin: 0;
           }
+          .scores {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(92px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+          }
+          .score-title {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0;
+          }
+          .score {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 8px;
+            background: #fbfcfe;
+          }
+          .score strong {
+            display: block;
+            color: var(--ink);
+          }
+          .score span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+          }
+          .rationale {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+          }
           .citations {
             margin-top: 12px;
             display: grid;
@@ -253,6 +300,7 @@ async def upload_form() -> str:
             .status-pill { margin-top: 14px; }
             .workspace { grid-template-columns: 1fr; }
             .meta { grid-template-columns: 1fr; }
+            .scores { grid-template-columns: 1fr 1fr; }
           }
         </style>
       </head>
@@ -282,6 +330,10 @@ async def upload_form() -> str:
               <div class="meta">
                 <div class="metric"><strong>25</strong><span>max questions</span></div>
                 <div class="metric"><strong>5</strong><span>concurrent answers</span></div>
+                <div id="confidence" class="confidence">
+                  <strong>--</strong>
+                  <span>overall confidence</span>
+                </div>
               </div>
             </form>
 
@@ -299,6 +351,7 @@ async def upload_form() -> str:
           const output = document.querySelector("#output");
           const status = document.querySelector("#result-status");
           const button = document.querySelector("#submit-button");
+          const confidence = document.querySelector("#confidence");
           for (const input of form.querySelectorAll('input[type="file"]')) {
             input.addEventListener("change", () => {
               const target = document.querySelector(`[data-for="${input.id}"]`);
@@ -310,6 +363,7 @@ async def upload_form() -> str:
             const started = performance.now();
             button.disabled = true;
             status.textContent = "Processing...";
+            confidence.style.display = "none";
             output.className = "empty";
             output.textContent = "Reading document and asking questions...";
             try {
@@ -319,6 +373,10 @@ async def upload_form() -> str:
                 ? await response.json()
                 : { detail: await response.text() };
               if (!response.ok) throw new Error(payload.detail || "Request failed");
+              if (typeof payload.overall_confidence === "number") {
+                confidence.style.display = "block";
+                confidence.querySelector("strong").textContent = `${Math.round(payload.overall_confidence * 100)}%`;
+              }
               output.className = "";
               output.innerHTML = payload.results.map(renderAnswer).join("");
               const seconds = ((performance.now() - started) / 1000).toFixed(1);
@@ -341,6 +399,7 @@ async def upload_form() -> str:
             }[char]));
           }
           function renderAnswer(item) {
+            const scores = item.rag_scores ? renderScores(item.rag_scores) : "";
             const citations = (item.citations || []).map((citation) => `
               <div class="citation">
                 <strong>${escapeHtml(citation.source)}${citation.page ? `, page ${citation.page}` : ""}</strong>
@@ -351,8 +410,24 @@ async def upload_form() -> str:
               <article class="answer">
                 <h3>${escapeHtml(item.question)}</h3>
                 <p>${escapeHtml(item.answer)}</p>
+                ${scores}
                 ${citations ? `<div class="citations">${citations}</div>` : ""}
               </article>
+            `;
+          }
+          function renderScores(scores) {
+            const percent5 = (value) => `${Math.round(Number(value || 0) * 20)}%`;
+            const percent1 = (value) => `${Math.round(Number(value || 0) * 100)}%`;
+            return `
+              <div class="score-title">RAGAS-style scores</div>
+              <div class="scores" aria-label="RAGAS-style scores">
+                <div class="score"><strong>${percent1(scores.confidence)}</strong><span>confidence</span></div>
+                <div class="score"><strong>${percent5(scores.faithfulness)}</strong><span>faithfulness</span></div>
+                <div class="score"><strong>${percent5(scores.answer_relevance)}</strong><span>relevance</span></div>
+                <div class="score"><strong>${percent5(scores.completeness)}</strong><span>completeness</span></div>
+                <div class="score"><strong>${percent5(scores.citation_support)}</strong><span>citation support</span></div>
+              </div>
+              ${scores.rationale ? `<div class="rationale">${escapeHtml(scores.rationale)}</div>` : ""}
             `;
           }
         </script>

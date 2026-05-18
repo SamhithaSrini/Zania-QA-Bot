@@ -33,15 +33,17 @@ By default, the app uses FAISS vector retrieval only for fast local demos. Set `
 
 The API also enforces configurable safety limits for document size, question count, question length, and processing timeout. See `.env.example`.
 
+`ENABLE_RAG_SCORES=true` adds inline LLM-judge scoring to each API response. Disable it for the fastest possible demo path.
+
 ## Run
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Open `http://localhost:8000/` for a minimal upload UI, or call the API directly.
+Open `http://localhost:8000/` for the upload UI, or call the API directly.
 
-The bundled UI accepts a document file and a questions file, shows request progress, and renders answers plus source snippets.
+The bundled UI accepts a document file and a questions file, shows request progress, and renders answers, source snippets, RAGAS-style quality scores, and an overall confidence score.
 
 ## Example Requests
 
@@ -75,9 +77,18 @@ Example response:
           "snippet": "Amazon Web Services Inc. (AWS) is used to provide cloud Software-as-a-Service hosting. GitHub is used to provide and host the GitHub application...",
           "page": null
         }
-      ]
+      ],
+      "rag_scores": {
+        "faithfulness": 5.0,
+        "answer_relevance": 5.0,
+        "completeness": 5.0,
+        "citation_support": 5.0,
+        "confidence": 1.0,
+        "rationale": "The answer is supported by the cited context."
+      }
     }
-  ]
+  ],
+  "overall_confidence": 1.0
 }
 ```
 
