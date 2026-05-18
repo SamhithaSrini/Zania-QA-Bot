@@ -1,6 +1,6 @@
 # Zania QA Bot
 
-FastAPI service for answering batches of questions against an uploaded PDF or JSON document. Each request parses the document, builds an in-memory FAISS index, reranks retrieved chunks with a HuggingFace cross-encoder, and asks `gpt-4o-mini` to answer each question.
+FastAPI service for answering batches of vendor-security questions against an uploaded PDF or JSON document. Each request parses the document, builds an in-memory FAISS index, retrieves relevant context, and asks `gpt-4o-mini` to answer each question with citations.
 
 ```text
 Upload document + questions
@@ -8,11 +8,9 @@ Upload document + questions
         v
 Parse PDF/JSON -> chunk text -> FAISS similarity search
         |                            |
-        |                            v
-        |                    cross-encoder rerank
-        |                            |
-        v                            v
-     questions --------------> gpt-4o-mini
+        |                 optional cross-encoder rerank
+        v                            |
+     questions ----------------------> gpt-4o-mini
         |
         v
     JSON answers
@@ -43,6 +41,8 @@ uvicorn app.main:app --reload
 
 Open `http://localhost:8000/` for a minimal upload UI, or call the API directly.
 
+The bundled UI accepts a document file and a questions file, shows request progress, and renders answers plus source snippets.
+
 ## Example Requests
 
 PDF document:
@@ -67,12 +67,12 @@ Example response:
 {
   "results": [
     {
-      "question": "What is the main topic of the document?",
-      "answer": "The document is about automated document question answering.",
+      "question": "Which cloud providers do you rely on?",
+      "answer": "The report identifies Amazon Web Services (AWS), GitHub, and Microsoft Office 365 as subservice organizations.",
       "citations": [
         {
           "source": "chunk-1",
-          "snippet": "This sample document is about automated document question answering.",
+          "snippet": "Amazon Web Services Inc. (AWS) is used to provide cloud Software-as-a-Service hosting. GitHub is used to provide and host the GitHub application...",
           "page": null
         }
       ]
@@ -109,7 +109,16 @@ Requests are logged as JSON and include status code and latency. API responses a
 
 ## Appendix Sample Files
 
-The bundled `sample_data/questions.json` contains the appendix questions. External evaluation examples provided with the prompt:
+The bundled `sample_data/questions.json` contains the appendix questions.
+
+The bundled `sample_data/document.pdf` is the provided Product Fruits SOC 2 Type II PDF:
+
+- `https://productfruits.com/docs/soc2-type2.pdf`
+
+The bundled `sample_data/document.json` is a JSON version of key Product Fruits SOC 2 details for local JSON-upload testing. It is not a direct export of the Google Sheet.
+
+The provided Google Sheet URL opens the Google Sheets UI, not a JSON file. Export or convert it before uploading to this API:
 
 - Sample JSON spreadsheet: `https://docs.google.com/spreadsheets/d/1u7z18yNKsL8cMLV6OxYI1-8ageRfFG1j/edit`
-- Sample PDF: `https://productfruits.com/docs/soc2-type2.pdf`
+
+Accepted upload formats are `.pdf` and `.json`.
