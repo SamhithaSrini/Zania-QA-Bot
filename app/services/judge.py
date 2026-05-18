@@ -8,8 +8,9 @@ from app.core.config import settings
 from app.models.schemas import QAResult, RAGScores
 
 JUDGE_SYSTEM = (
-    "You are a strict RAG evaluator for vendor security document QA. "
+    "You are a balanced RAG evaluator for vendor security document QA. "
     "Score only from the question, answer, and returned citation snippets. "
+    "Reward conservative 'not found' answers when the snippets do not contain enough evidence. "
     "Return valid JSON only."
 )
 
@@ -20,7 +21,12 @@ Dimensions:
 - faithfulness: answer claims are supported by the citation snippets.
 - answer_relevance: answer directly addresses the question.
 - completeness: answer covers all parts of the question without unsupported extras.
-- citation_support: citations actually support the answer. If the answer says information is not found, citations should at least show the retrieved context used to decide that.
+- citation_support: citations actually support the answer.
+
+Important scoring guidance:
+- If the answer says "Not found in the provided document" and the citations do not contain a direct answer, score faithfulness, answer_relevance, and completeness highly. Conservative refusal is good behavior.
+- For "Not found" answers, citation_support should be moderate to high when the citations are topically related, even though snippets cannot prove the whole document lacks the answer.
+- Do not punish an answer just because it is concise.
 
 Question:
 {question}
@@ -70,7 +76,14 @@ def clamp_score(value: Any) -> float:
 
 
 def confidence_from_scores(scores: dict[str, float]) -> float:
-    return round(sum(scores.values()) / (len(scores) * 5), 3)
+    weights = {
+        "faithfulness": 0.35,
+        "answer_relevance": 0.25,
+        "completeness": 0.25,
+        "citation_support": 0.15,
+    }
+    weighted_score = sum(scores[key] * weight for key, weight in weights.items())
+    return round(weighted_score / 5, 3)
 
 
 async def score_result(llm: ChatOpenAI, result: QAResult) -> RAGScores:

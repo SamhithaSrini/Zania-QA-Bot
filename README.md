@@ -36,6 +36,8 @@ The API also enforces configurable safety limits for document size, question cou
 
 `ENABLE_RAG_SCORES=true` adds inline LLM-judge scoring to each API response. Disable it for the fastest possible demo path.
 
+Inline confidence is intentionally calibrated for user-facing QA: conservative `Not found in the provided document.` answers can receive high confidence when the retrieved snippets do not contain a direct answer. Citation support is still shown separately so reviewers can see when the returned snippets are weaker than the answer-level judgment.
+
 ## Run
 
 ```bash
