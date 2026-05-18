@@ -1,9 +1,11 @@
+
 # Zania QA Bot
 
 FastAPI service for answering batches of vendor-security questions against an uploaded PDF or JSON document. Each request parses the document, builds an in-memory FAISS index, retrieves relevant context, and asks `gpt-4o-mini` to answer each question with citations.
 
 <img width="646" height="483" alt="Screenshot 2026-05-18 at 2 10 04 PM" src="https://github.com/user-attachments/assets/6b56d352-ccf8-455b-9f46-e655e42853d7" />
-
+<img width="1068" height="538" alt="Screenshot 2026-05-18 at 2 39 26 PM" src="https://github.com/user-attachments/assets/a7871162-4d60-4b45-a231-e296b651654b" />
+<img width="625" height="682" alt="Screenshot 2026-05-18 at 2 39 06 PM" src="https://github.com/user-attachments/assets/7c14432e-b44e-4b27-bf7b-9dd265e7daaa" />
 # QA Bot Stages
 
 Retrieval pipeline: 
