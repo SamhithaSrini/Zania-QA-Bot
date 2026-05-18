@@ -2,19 +2,20 @@
 
 FastAPI service for answering batches of vendor-security questions against an uploaded PDF or JSON document. Each request parses the document, builds an in-memory FAISS index, retrieves relevant context, and asks `gpt-4o-mini` to answer each question with citations.
 
-```text
-Upload document + questions
-        |
-        v
-Parse PDF/JSON -> chunk text -> FAISS similarity search
-        |                            |
-        |                 optional cross-encoder rerank
-        v                            |
-     questions ----------------------> gpt-4o-mini
-        |
-        v
-    JSON answers
-```
+<img width="646" height="483" alt="Screenshot 2026-05-18 at 2 10 04 PM" src="https://github.com/user-attachments/assets/6b56d352-ccf8-455b-9f46-e655e42853d7" />
+
+# QA Bot Stages
+
+Retrieval pipeline: 
+<img width="700" height="401" alt="Screenshot 2026-05-18 at 2 11 48 PM" src="https://github.com/user-attachments/assets/47b1638d-43b0-4367-b9a5-6b5e8b832bf3" />
+
+Concurrent question answering flow — this is where the async concurrency and deduplication logic lives:
+<img width="773" height="383" alt="Screenshot 2026-05-18 at 2 12 43 PM" src="https://github.com/user-attachments/assets/7b8c7889-2ab4-4b34-b1ce-21c6d27698f9" />
+
+Eval + observability layer — how the system measures itself:
+
+<img width="677" height="362" alt="Screenshot 2026-05-18 at 2 13 10 PM" src="https://github.com/user-attachments/assets/eb9828b8-8239-4e65-865a-715cfc614802" />
+
 
 ## Setup
 
