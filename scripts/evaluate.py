@@ -82,12 +82,16 @@ async def evaluate(eval_path: Path) -> dict[str, Any]:
         rows.append(
             {
                 "id": case["id"],
+                "question": case["question"],
                 "answerable": answerable,
+                "reference_answer": case["reference_answer"],
+                "required_keywords": case["required_keywords"],
                 "not_found_correct": (not answerable and not_found)
                 or (answerable and not not_found),
                 "token_f1": token_f1(answer, case["reference_answer"]),
                 "keyword_recall": keyword_recall(answer, case["required_keywords"]),
                 "has_citation": bool(result.citations),
+                "citations": [citation.model_dump() for citation in result.citations],
                 "answer": answer,
             }
         )

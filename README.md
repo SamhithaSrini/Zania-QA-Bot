@@ -129,6 +129,32 @@ Baseline run with `USE_RERANKER=false`, `FAISS_TOP_K=5`, and `gpt-4o-mini`:
 
 This is intentionally domain-specific rather than a generic SQuAD score. It tests the actual SOC 2/vendor-questionnaire workflow, including retrieval, grounding, citations, and unanswerable cases.
 
+For new PDFs that do not have a golden dataset, use the optional LLM-as-judge layer after generating eval results:
+
+```bash
+python scripts/evaluate_judge.py \
+  --results eval_results/productfruits_results.json \
+  --output eval_results/productfruits_judge.json
+```
+
+The judge scores each answer from 0 to 5 on:
+
+- faithfulness: whether answer claims are supported by cited context
+- answer relevance: whether the answer addresses the question
+- completeness: whether all parts of the question are handled
+- citation support: whether returned snippets support the answer
+
+Baseline judge run over the Product Fruits eval output:
+
+| Judge Metric | Score |
+| --- | ---: |
+| Faithfulness | 5.00 / 5 |
+| Answer relevance | 5.00 / 5 |
+| Completeness | 5.00 / 5 |
+| Citation support | 3.75 / 5 |
+
+This complements F1/recall. Use the labeled evaluator when golden answers exist; use LLM-as-judge when testing a new document without labels.
+
 ## Design Decisions
 
 The service can use two-stage retrieval. FAISS first performs fast vector similarity search over document chunks. When `USE_RERANKER=true`, the cross-encoder reranks those candidates by jointly scoring each question and chunk. This adds latency, but it can improve answer quality because the LLM receives fewer and more relevant chunks.
